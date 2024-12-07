@@ -1,10 +1,11 @@
 # app/main/blueprints/chat.py
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, jsonify
 from flask_socketio import SocketIO, emit
 from jinja2.utils import Namespace
 from app.main.extensions import socketio
 from app.main.service.user_service import UserService
 import logging
+from app.main.model.chat import message_history
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 chat_bp = Blueprint('chat', __name__)
 
-message_history = []
+@chat_bp.route('/get_history', methods=['GET'])
+def get_history():
+    return jsonify({"messages": message_history})
 
 @socketio.on('connect', namespace='/chat')
 def handle_connect():
